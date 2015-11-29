@@ -1,19 +1,12 @@
-module demoApp {
-    'use strict';
+export class CustomersController {
+    customers: ICustomer[] = null;
 
-    class CustomersController {
-        customers: ICustomer[] = null;
-
-        static $inject = ['demoApp.dataService'];
-        constructor(dataService: DataService) {
-            dataService.getCustomers()
-              .then((custs: ICustomer[]) => {
-                 this.customers = custs;
-              });
-        }
+    static $inject = ['demoApp.dataService'];
+    constructor(dataService: DataService) {
+        this.getCustomers();
     }
 
-    angular.module('demoApp')
-           .controller('demoApp.CustomersController', CustomersController);
-
+    async getCustomers() {
+      this.customers = await dataService.getCustomers();
+    }
 }

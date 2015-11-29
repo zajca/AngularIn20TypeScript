@@ -1,22 +1,20 @@
-module demoApp {
+import {IOrder, DataService} from '../services/data.service.ts'
 
-    class OrdersController {
 
-        customerId: number;
-        orders: IOrder[];
+export class OrdersController {
 
-        static $inject = ['$routeParams', 'demoApp.dataService'];
-        constructor($routeParams, dataService: DataService) {
-            this.customerId = $routeParams.customerId;
+    customerId: number;
+    orders: IOrder[];
+    dataService: DataService;
 
-            dataService.getOrder(this.customerId)
-              .then((orders: IOrder[]) => {
-                 this.orders = orders;
-              });
-        }
+    static $inject = ['$routeParams', 'demoApp.dataService'];
+    constructor($routeParams, dataService: DataService) {
+      this.dataService = dataService;
+        this.customerId = $routeParams.customerId;
+        this.getOrders();
     }
 
-    angular.module('demoApp')
-        .controller('demoApp.OrdersController', OrdersController);
-
+    async getOrders() {
+      this.orders = await this.dataService.getOrder(this.customerId);
+    }
 }

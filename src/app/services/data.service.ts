@@ -1,35 +1,26 @@
-module demoApp {
+export interface ICustomer {
+    id: number;
+    name: string;
+    total: number;
+}
 
-    export interface ICustomer {
-        id: number;
-        name: string;
-        total: number;
+export interface IOrder {
+    product: string;
+    total: number;
+}
+
+export class DataService {
+
+    static $inject = ['$http'];
+    constructor(private $http: ng.IHttpService) {}
+
+    async getCustomers(): ng.IHttpPromiseCallbackArg<ICustomer[]> {
+        let response = await this.$http.get('customers.json');
+        return response.data;
     }
 
-    export interface IOrder {
-        product: string;
-        total: number;
+    async getOrder(id: number): ng.IHttpPromiseCallbackArg<IOrder[]> {
+       let response = await this.$http.get('orders.json');
+       return response.data;
     }
-
-    export class DataService {
-
-        static $inject = ['$http'];
-        constructor(private $http: ng.IHttpService) {}
-
-        getCustomers(): ng.IPromise<ICustomer[]> {
-            return this.$http.get('customers.json').then(response => {
-                return response.data;
-            });
-        }
-
-        getOrder(id: number): ng.IPromise<IOrder[]> {
-            return this.$http.get('orders.json', { id: id }).then(response => {
-               return response.data;
-            });
-        }
-    }
-
-    angular.module('demoApp')
-        .service('demoApp.dataService', DataService);
-
 }

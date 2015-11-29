@@ -10,7 +10,8 @@ var gulp = require('gulp'),
     Config = require('./gulpfile.config'),
     tsProject = tsc.createProject('tsconfig.json'),
     browserSync = require('browser-sync'),
-    superstatic = require( 'superstatic' );
+    superstatic = require( 'superstatic' ),
+    babel = require("gulp-babel");
 
 var config = new Config();
 
@@ -42,16 +43,25 @@ gulp.task('ts-lint', function () {
 gulp.task('compile-ts', function () {
     var sourceTsFiles = [config.allTypeScript,                //path to typescript files
                          config.libraryTypeScriptDefinitions]; //reference to library .d.ts files
-                        
 
-    var tsResult = gulp.src(sourceTsFiles)
-                       .pipe(sourcemaps.init())
-                       .pipe(tsc(tsProject));
+console.log(config.allTypeScript);
+    return gulp.src(sourceTsFiles)
+       .pipe(sourcemaps.init())
+       .pipe(tsc({
+         experimentalAsyncFunctions: true,
+          target: "ES6",
+          typescript: require('typescript'),
+          removeComments: true
+       }))
+       .pipe(babel({
+            "compact": false
+        }))
+        .pipe(sourcemaps.write('.'))
+        .pipe(gulp.dest(config.tsOutputPath));
+        // tsResult.dts.pipe(gulp.dest(config.tsOutputPath));
+        // return tsResult.js
+                        // .pipe(sourcemaps.write('.'))
 
-        tsResult.dts.pipe(gulp.dest(config.tsOutputPath));
-        return tsResult.js
-                        .pipe(sourcemaps.write('.'))
-                        .pipe(gulp.dest(config.tsOutputPath));
 });
 
 /**
